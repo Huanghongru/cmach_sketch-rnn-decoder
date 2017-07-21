@@ -65,7 +65,8 @@ def get_default_hparams():
         augment_stroke_prob=0.10,  # Point dropping augmentation proportion.
         conditional=True,  # When False, use unconditional decoder-only model.
         is_training=True,  # Is model training? Recommend keeping true.
-        num_enc_experts=1   # The num of the encoder Experts
+        num_enc_experts=1,   # The num of the encoder Experts
+        num_dec_experts=1
     )
     return hparams
 
@@ -145,38 +146,41 @@ class Model(object):
 
         return params
 
-    def decoder(self, actual_input_x, initial_state):
+    def decoder(self, actual_input_x, initial_state, N):
         self.num_mixture = self.hps.num_mixture
 
         # Number of outputs is end_of_stroke + prob + 2*(mu + sig) + corr
         n_out = (3 + self.num_mixture * 6)
+        dec_out = []
 
         with tf.variable_scope('DEC_RNN') as scope:
-            try:
-                output_w = tf.get_variable('output_w', [self.hps.dec_rnn_size, n_out])
-                output_b = tf.get_variable('output_b', [n_out])
-            except ValueError:
-                scope.reuse_variables()
-                output_w = tf.get_variable('output_w')
-                output_b = tf.get_variable('output_b')
+            for i in range(N):
+                try:
+                    output_w = tf.get_variable('output_w', [self.hps.dec_rnn_size, n_out])
+                    output_b = tf.get_variable('output_b', [n_out])
+                except ValueError:
+                    scope.reuse_variables()
+                    output_w = tf.get_variable('output_w')
+                    output_b = tf.get_variable('output_b')
 
-            # decoder module of sketch-rnn is below
-            output, last_state = tf.nn.dynamic_rnn(
-                self.cell,
-                actual_input_x,
-                initial_state=initial_state,
-                time_major=False,
-                swap_memory=True,
-                dtype=tf.float32)
+                # decoder module of sketch-rnn is below
+                output, last_state = tf.nn.dynamic_rnn(
+                    self.cell,
+                    actual_input_x,
+                    initial_state=initial_state,
+                    time_major=False,
+                    swap_memory=True,
+                    dtype=tf.float32)
 
-            # reshape output
-            output = tf.reshape(output, [-1, self.hps.dec_rnn_size])
-            output = tf.nn.xw_plus_b(output, output_w, output_b)
+                # reshape output
+                output = tf.reshape(output, [-1, self.hps.dec_rnn_size])
+                output = tf.nn.xw_plus_b(output, output_w, output_b)
 
-        # params of the decoder
-        # should be saved
-        out = self.get_mixture_coef(output)
-        return out, last_state
+                # params of the decoder
+                # should be saved
+                out = self.get_mixture_coef(output)
+                dec_out.append([out, last_state])
+        return dec_out
 
     def tf_2d_normal(self, x1, x2, mu1, mu2, s1, s2, rho):
         """Returns result of eq # 24 and 25 of http://arxiv.org/abs/1308.0850."""
@@ -262,6 +266,7 @@ class Model(object):
 
         # set the number of experts
         self.num_enc_experts = self.hps.num_enc_experts
+        self.num_dec_experts = self.hps.num_dec_experts
         if not self.hps.conditional:
             self.num_enc_experts = 1
 
@@ -348,44 +353,31 @@ class Model(object):
         target = tf.reshape(self.output_x, [-1, 5])
         self.x1_data, self.x2_data, eos_data, eoc_data, cont_data = tf.split(target, 5, 1)  # ???
         self.pen_data = tf.concat([eos_data, eoc_data, cont_data], 1)  # the real pen state
-        self.initial_states = []
+
+        mu = self.experts_mu_presig[0]
+        presig = self.experts_mu_presig[1]
+        batch_z, kl_costs = self.compute_inputs(mu, presig)
         self.final_states = []
         self.gmm_outs = []
-        self.batch_zs = []
-        expert_kl_costs = []
 
-        """Compute batch_z and kl_costs of each experts"""
-        for i in range(self.num_enc_experts):
-            mu, presig = self.experts_mu_presig[i]
-            batch_z, kl_costs = self.compute_inputs(mu, presig)
-            self.batch_zs.append(batch_z)
-            expert_kl_costs.append(kl_costs)
+        scope = "init_state%d" % 0
+        with tf.variable_scope(scope):
+            initial_state = tf.nn.tanh(
+                rnn.super_linear(
+                    batch_z,
+                    self.cell.state_size,
+                    init_w='gaussian',
+                    weight_start=0.001,
+                    input_size=self.hps.z_size))
 
-        for i in range(self.num_enc_experts):
-            # compute the hidden state for decoder
-            batch_z = self.batch_zs[i]
-            scope = "init_state%d" % i
-            with tf.variable_scope(scope):
-                initial_state = tf.nn.tanh(
-                    rnn.super_linear(
-                        batch_z,
-                        self.cell.state_size,
-                        init_w='gaussian',
-                        weight_start=0.001,
-                        input_size=self.hps.z_size))
-            self.initial_states.append(initial_state)
+        pre_tile_y = tf.reshape(batch_z, [self.hps.batch_size, 1, self.hps.z_size])
+        overlay_x = tf.tile(pre_tile_y, [1, self.hps.max_seq_len, 1])
+        actual_input_x = tf.concat([self.input_x, overlay_x], 2)
 
-        for i in range(self.num_enc_experts):
-            # compute the input x for decoder
-            batch_z = self.batch_zs[i]
-            pre_tile_y = tf.reshape(batch_z, [self.hps.batch_size, 1, self.hps.z_size])  # ???
-            overlay_x = tf.tile(pre_tile_y, [1, self.hps.max_seq_len, 1])  # ???
-            actual_input_x = tf.concat([self.input_xs[i], overlay_x], 2)
-
-            # decoder: compute the output params for GMM and the final hidden state
-            # final state: only useful for inference mode (which is the next state)
-            initial_state = self.initial_states[i]
-            out, last_state = self.decoder(actual_input_x, initial_state)
+        dec_out = self.decoder(actual_input_x, initial_state, self.num_dec_experts)
+        for i in range(self.num_dec_experts):
+            out = dec_out[i][0]
+            last_state = dec_out[i][1]
             self.gmm_outs.append(out)
             self.final_states.append(last_state)
 
@@ -398,22 +390,20 @@ class Model(object):
             r_costs = tf.reduce_mean(r_costs, axis=1)
 
             # compute total costs
-            kl_costs = expert_kl_costs[i]
             costs = kl_costs * self.kl_weight + r_costs
 
-            # assign each sample to the expert with the lowest cost
+            # select the expert with the lowest costs
             if i == 0:
-                final_kl_costs = kl_costs
                 final_r_costs = r_costs
                 final_costs = costs
             else:
                 idx = tf.less(costs, final_costs)
-                final_kl_costs = tf.where(idx, kl_costs, final_kl_costs)
                 final_r_costs = tf.where(idx, r_costs, final_r_costs)
                 final_costs = tf.where(idx, costs, final_costs)
 
+
         # compute the average kl cost, reconstruction cost, total cost for the whole batch
-        self.kl_cost = tf.reduce_mean(final_kl_costs)  # for printing only
+        self.kl_cost = kl_costs  # for printing only
         self.r_cost = tf.reduce_mean(final_r_costs)  # for printing only
         self.cost = tf.reduce_mean(final_costs)  # for printing only in validation mode, for optimizer in training mode
 
