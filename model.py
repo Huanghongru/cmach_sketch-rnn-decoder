@@ -48,7 +48,7 @@ def get_default_hparams():
         kl_weight=0.5,  # KL weight of loss equation. Recommend 0.5 or 1.0.
         kl_weight_start=0.01,  # KL start weight when annealing.
         kl_tolerance=0.2,  # Level of KL loss at which to stop optimizing for KL. default 0.2
-        batch_size=100,  # Minibatch size. Recommend leaving at 100.
+        batch_size=50,  # Minibatch size. Recommend leaving at 100.
         grad_clip=1.0,  # Gradient clipping. Recommend leaving at 1.0.
         num_mixture=20,  # Number of mixtures in Gaussian mixture model.
         learning_rate=0.001,  # Learning rate.
@@ -66,7 +66,7 @@ def get_default_hparams():
         conditional=True,  # When False, use unconditional decoder-only model.
         is_training=True,  # Is model training? Recommend keeping true.
         num_enc_experts=1,   # The num of the encoder Experts
-        num_dec_experts=1
+        num_dec_experts=2
     )
     return hparams
 
@@ -354,8 +354,8 @@ class Model(object):
         self.x1_data, self.x2_data, eos_data, eoc_data, cont_data = tf.split(target, 5, 1)  # ???
         self.pen_data = tf.concat([eos_data, eoc_data, cont_data], 1)  # the real pen state
 
-        mu = self.experts_mu_presig[0]
-        presig = self.experts_mu_presig[1]
+        mu = self.experts_mu_presig[0][0]
+        presig = self.experts_mu_presig[0][1]
         batch_z, kl_costs = self.compute_inputs(mu, presig)
         self.final_states = []
         self.gmm_outs = []
@@ -404,6 +404,8 @@ class Model(object):
 
         # compute the average kl cost, reconstruction cost, total cost for the whole batch
         self.kl_cost = kl_costs  # for printing only
+        self.batch_zs = [batch_z for _ in range(self.num_dec_experts)]
+        self.initial_states = [initial_state for _ in range(self.num_dec_experts)]
         self.r_cost = tf.reduce_mean(final_r_costs)  # for printing only
         self.cost = tf.reduce_mean(final_costs)  # for printing only in validation mode, for optimizer in training mode
 
@@ -458,8 +460,7 @@ class Model(object):
             self.build_unconditional_model()
 
 
-def sample(sess, model, seq_len=250, temperature=1.0, greedy_mode=False,
-           z=None):
+def sample(sess, model, seq_len=250, temperature=1.0, greedy_mode=False, z=None):
     """Samples a sequence from a pre-trained model."""
 
     def adjust_temp(pi_pdf, temp):
@@ -506,7 +507,7 @@ def sample(sess, model, seq_len=250, temperature=1.0, greedy_mode=False,
     # generate strokes by the best expert
     # (number of experts, seq_len, 5)
     # number of experts set to be 2
-    strokes = np.zeros((model.num_enc_experts, seq_len, 5), dtype=np.float32)
+    strokes = np.zeros((model.num_dec_experts, seq_len, 5), dtype=np.float32)
     greedy = False
     temp = 1.0
     prev_xs = None  # store the previous output dot x
@@ -519,32 +520,21 @@ def sample(sess, model, seq_len=250, temperature=1.0, greedy_mode=False,
                 model.initial_state: prev_state
             }
         else:
-
             if prev_xs is None:
-                prev_xs = [prev_x for _ in range(model.num_enc_experts)]
-            feed = {
-                l: r for l, r in zip(model.input_xs, prev_xs)
-            }
-            feed.update({
-                model.sequence_lengths: [1]
-            })
-            feed.update({
-                l: r for l, r in zip(model.initial_states, prev_state)
-            })
-            feed.update({
-                l: r for l, r in zip(model.batch_zs, z)
-            })
+                prev_xs = [prev_x for _ in range(model.num_dec_experts)]
+            feed = {l: r for l, r in zip(model.input_xs, prev_xs)}
+            feed.update({model.sequence_lengths: [1]})
+            feed.update({l: r for l, r in zip(model.initial_states, prev_state)})
+            feed.update({l: r for l, r in zip(model.batch_zs, z)})
 
         # only output the results of the first state
-        params = sess.run([
-            model.gmm_outs, model.final_states
-        ], feed)
+        params = sess.run([model.gmm_outs, model.final_states], feed)
 
         gmm_outs, final_states = params
         prev_state = []
         prev_xs = []
 
-        for k in range(model.num_enc_experts):
+        for k in range(model.num_dec_experts):
             o_pi, o_mu1, o_mu2, o_sigma1, o_sigma2, o_corr, o_pen, o_pen_logits = gmm_outs[k]
             next_state = final_states[k]
 
