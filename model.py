@@ -93,15 +93,19 @@ class Model(object):
                 self.build_model()
 
     def encoder(self, batch, sequence_lengths, N):
-        """Define the bi-directional encoder module of sketch-rnn.
+        """
+        Define the bi-directional encoder module of sketch-rnn.
 
-    Args:
-        batch: a 3d tensor. a batch of inputs, though the codes write "output_x"
-        sequence_lengths: an int specified by training process, indicating sequence lengths of all input samples
-        N: number of experts
-    Return:
-        mu1, presig1, mu2, presig2: parameters for the definition of latent vector z
-    """
+        Args:
+            batch: a 3d tensor. a batch of inputs, though the codes write "output_x"
+            sequence_lengths: an int specified by training process, indicating sequence lengths of all input samples
+            N: number of experts
+        Return:
+            mu1, presig1, mu2, presig2: parameters for the definition of latent vector z
+        """
+        """
+        No modification in encoder part but fix N as 1 to simplify the problem
+        """
         unused_outputs, last_states = tf.nn.bidirectional_dynamic_rnn(
             self.enc_cell_fw,
             self.enc_cell_bw,
@@ -147,12 +151,23 @@ class Model(object):
         return params
 
     def decoder(self, actual_input_x, initial_state, N):
+        """
+        Define the hyperLSTM decoder with experts.
+        The main idea is similar with the encoder part.
+
+
+        :param actual_input_x: not so clear...
+        :param initial_state: not so clear...
+        :param N: num of decoder
+        :return: a list of [out, last_state] for each experts in decoder
+        """
         self.num_mixture = self.hps.num_mixture
 
         # Number of outputs is end_of_stroke + prob + 2*(mu + sig) + corr
         n_out = (3 + self.num_mixture * 6)
         dec_out = []
 
+        # Define N experts similarly as the encoder part
         with tf.variable_scope('DEC_RNN') as scope:
             for i in range(N):
                 try:
@@ -354,6 +369,7 @@ class Model(object):
         self.x1_data, self.x2_data, eos_data, eoc_data, cont_data = tf.split(target, 5, 1)  # ???
         self.pen_data = tf.concat([eos_data, eoc_data, cont_data], 1)  # the real pen state
 
+        # Since we fix num of encoder experts as 1, we have only one mu and one presigma
         mu = self.experts_mu_presig[0][0]
         presig = self.experts_mu_presig[0][1]
         batch_z, kl_costs = self.compute_inputs(mu, presig)
@@ -375,6 +391,9 @@ class Model(object):
         actual_input_x = tf.concat([self.input_x, overlay_x], 2)
 
         dec_out = self.decoder(actual_input_x, initial_state, self.num_dec_experts)
+        # For each decoder expert, we calculate their final_r_costs and final_costs respectively.
+        # Then update the parameters of decoder which has the least final_r_costs and final_cost.
+        # All the decoders have the same kl_costs because there are only one encoder expert.
         for i in range(self.num_dec_experts):
             out = dec_out[i][0]
             last_state = dec_out[i][1]
@@ -424,6 +443,7 @@ class Model(object):
     def build_unconditional_model(self):
         # config model detailed model elements
         # config input data
+        """We haven't modified this part yet."""
         self.config_model()
 
         self.batch_z = tf.zeros(
@@ -462,7 +482,9 @@ class Model(object):
 
 def sample(sess, model, seq_len=250, temperature=1.0, greedy_mode=False, z=None):
     """Samples a sequence from a pre-trained model."""
-
+    """
+        Most of the changes are alter 'num_enc_experts' to 'num_dec_experts'.
+    """
     def adjust_temp(pi_pdf, temp):
         pi_pdf = np.log(pi_pdf) / temp
         pi_pdf -= pi_pdf.max()

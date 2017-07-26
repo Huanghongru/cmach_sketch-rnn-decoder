@@ -2,13 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fc892281-bc83-4483-b0c6-dcf14c2bd500" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test_model/vector-1.data-00000-of-00001" afterPath="$PROJECT_DIR$/test_model/vector-1.data-00000-of-00001" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test_model/vector-1.index" afterPath="$PROJECT_DIR$/test_model/vector-1.index" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test_model/vector-1.meta" afterPath="$PROJECT_DIR$/test_model/vector-1.meta" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/model.py" afterPath="$PROJECT_DIR$/model.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test.ipynb" afterPath="$PROJECT_DIR$/test.ipynb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test_model/model_config.json" afterPath="$PROJECT_DIR$/test_model/model_config.json" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -23,8 +18,8 @@
       <file leaf-file-name="model.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="286">
-              <caret line="465" column="26" lean-forward="false" selection-start-line="465" selection-start-column="26" selection-end-line="465" selection-end-column="26" />
+            <state relative-caret-position="390">
+              <caret line="485" column="77" lean-forward="false" selection-start-line="485" selection-start-column="77" selection-end-line="485" selection-end-column="77" />
               <folding>
                 <element signature="e#620#658#0" expanded="true" />
               </folding>
@@ -45,27 +40,9 @@
       <file leaf-file-name="sketch_rnn_train.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/sketch_rnn_train.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="156">
+            <state relative-caret-position="1924">
               <caret line="92" column="69" lean-forward="false" selection-start-line="87" selection-start-column="26" selection-end-line="87" selection-end-column="27" />
               <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="test.ipynb" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/test.ipynb">
-          <provider selected="true" editor-type-id="ipnb-editor">
-            <state>
-              <selected id="15" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="test-ori.ipynb" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/test-ori.ipynb">
-          <provider selected="true" editor-type-id="ipnb-editor">
-            <state>
-              <selected id="9" />
             </state>
           </provider>
         </entry>
@@ -117,9 +94,9 @@
         <option value="$PROJECT_DIR$/test-ori.ipynb" />
         <option value="$USER_HOME$/sketch-rnn_moe/test.ipynb" />
         <option value="$PROJECT_DIR$/sketch_rnn_train.py" />
-        <option value="$PROJECT_DIR$/model.py" />
         <option value="$USER_HOME$/Magenta/magenta/models/sketch_rnn/sketch_rnn.ipynb" />
         <option value="$PROJECT_DIR$/test.ipynb" />
+        <option value="$PROJECT_DIR$/model.py" />
       </list>
     </option>
   </component>
@@ -361,6 +338,46 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#620#658#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3224">
+          <caret line="124" column="13" lean-forward="false" selection-start-line="124" selection-start-column="4" selection-end-line="124" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sketch_rnn_train.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2392">
+          <caret line="92" column="69" lean-forward="false" selection-start-line="87" selection-start-column="26" selection-end-line="87" selection-end-column="27" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test.ipynb">
+      <provider selected="true" editor-type-id="ipnb-editor">
+        <state>
+          <selected id="-1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test-ori.ipynb">
+      <provider selected="true" editor-type-id="ipnb-editor">
+        <state>
+          <selected id="-1" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/model.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -638,7 +655,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/sketch_rnn_train.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="156">
+        <state relative-caret-position="1924">
           <caret line="92" column="69" lean-forward="false" selection-start-line="87" selection-start-column="26" selection-end-line="87" selection-end-column="27" />
           <folding />
         </state>
@@ -647,14 +664,14 @@
     <entry file="file://$PROJECT_DIR$/test.ipynb">
       <provider selected="true" editor-type-id="ipnb-editor">
         <state>
-          <selected id="11" />
+          <selected id="15" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/model.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="286">
-          <caret line="465" column="26" lean-forward="false" selection-start-line="465" selection-start-column="26" selection-end-line="465" selection-end-column="26" />
+        <state relative-caret-position="390">
+          <caret line="485" column="77" lean-forward="false" selection-start-line="485" selection-start-column="77" selection-end-line="485" selection-end-column="77" />
           <folding>
             <element signature="e#620#658#0" expanded="true" />
           </folding>
