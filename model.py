@@ -37,14 +37,14 @@ def get_default_hparams():
     hparams = tf.contrib.training.HParams(
         data_set=['cow.npz', 'crab.npz'],  # Our dataset.
         # num_steps=10000000,  # Total number of steps of training. Keep large.
-        num_steps=2,
-        save_every=1,  # Number of batches per checkpoint creation.
+        num_steps=10001,
+        save_every=10000,  # Number of batches per checkpoint creation.
         max_seq_len=250,  # Not used. Will be changed by model. [Eliminate?]
-        dec_rnn_size=128,  # Size of decoder.
+        dec_rnn_size=512,  # Size of decoder.
         dec_model='hyper',  # Decoder: lstm, layer_norm or hyper.
-        enc_rnn_size=64,  # Size of encoder.
+        enc_rnn_size=256,  # Size of encoder.
         enc_model='layer_norm',  # Encoder: lstm, layer_norm or hyper.
-        z_size=32,  # Size of latent vector z. Recommend 32, 64 or 128.
+        z_size=128,  # Size of latent vector z. Recommend 32, 64 or 128.
         kl_weight=0.5,  # KL weight of loss equation. Recommend 0.5 or 1.0.
         kl_weight_start=0.01,  # KL start weight when annealing.
         kl_tolerance=0.2,  # Level of KL loss at which to stop optimizing for KL. default 0.2
@@ -403,7 +403,7 @@ class Model(object):
 
 
         # compute the average kl cost, reconstruction cost, total cost for the whole batch
-        self.kl_cost = kl_costs  # for printing only
+        self.kl_cost = tf.reduce_mean(kl_costs)  # for printing only
         self.batch_zs = [batch_z for _ in range(self.num_dec_experts)]
         self.initial_states = [initial_state for _ in range(self.num_dec_experts)]
         self.r_cost = tf.reduce_mean(final_r_costs)  # for printing only
