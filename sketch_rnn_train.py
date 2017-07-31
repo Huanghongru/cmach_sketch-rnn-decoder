@@ -309,7 +309,9 @@ def train(sess, model, eval_model, train_set, valid_set, test_set):
             reconstr_summ.value.add(
                 tag='Train_Reconstr_Cost', simple_value=float(r_cost))
             kl_summ = tf.summary.Summary()
-            kl_summ.value.add(tag='Train_KL_Cost', simple_value=float(kl_cost))
+            # kl_summ.value.add(tag='Train_KL_Cost', simple_value=float(kl_cost))
+            # kl_cost should be a ndarray, not clear why it use float here  === kl_cost is an average in model
+            kl_summ.value.add(tag='Train_KL_Cost', simple_value=kl_cost)
             lr_summ = tf.summary.Summary()
             lr_summ.value.add(
                 tag='Learning_Rate', simple_value=float(curr_learning_rate))

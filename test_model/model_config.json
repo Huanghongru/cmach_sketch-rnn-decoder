@@ -11,26 +11,25 @@
  "random_scale_factor": 0.15, 
  "decay_rate": 0.9999, 
  "use_recurrent_dropout": false, 
- "num_steps": 2, 
+ "num_steps": 10001, 
  "use_output_dropout": false, 
- "max_seq_len": 208, 
+ "max_seq_len": 62, 
  "num_dec_experts": 2, 
- "z_size": 32, 
+ "z_size": 128, 
  "augment_stroke_prob": 0.1, 
  "learning_rate": 0.001, 
  "batch_size": 50, 
  "enc_model": "layer_norm", 
  "use_input_dropout": false, 
  "dec_model": "hyper", 
- "enc_rnn_size": 64, 
+ "enc_rnn_size": 256, 
  "output_dropout_prob": 0.9, 
- "save_every": 1, 
+ "save_every": 10000, 
  "kl_weight": 0.5, 
  "data_set": [
-  "cow.npz", 
-  "crab.npz"
+  "apple.npz"
  ], 
  "kl_weight_start": 0.01, 
- "dec_rnn_size": 128, 
+ "dec_rnn_size": 512, 
  "recurrent_dropout_prob": 0.9
 }
