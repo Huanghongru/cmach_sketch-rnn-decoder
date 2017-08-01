@@ -37,14 +37,14 @@ def get_default_hparams():
     hparams = tf.contrib.training.HParams(
         data_set=['apple.npz'],  # Our dataset.
         # num_steps=10000000,  # Total number of steps of training. Keep large.
-        num_steps=10001,
-        save_every=10000,  # Number of batches per checkpoint creation.
+        num_steps=6,
+        save_every=5,  # Number of batches per checkpoint creation.
         max_seq_len=250,  # Not used. Will be changed by model. [Eliminate?]
-        dec_rnn_size=512,  # Size of decoder.
+        dec_rnn_size=128,  # Size of decoder.
         dec_model='hyper',  # Decoder: lstm, layer_norm or hyper.
-        enc_rnn_size=256,  # Size of encoder.
+        enc_rnn_size=64,  # Size of encoder.
         enc_model='layer_norm',  # Encoder: lstm, layer_norm or hyper.
-        z_size=128,  # Size of latent vector z. Recommend 32, 64 or 128.
+        z_size=32,  # Size of latent vector z. Recommend 32, 64 or 128.
         kl_weight=0.5,  # KL weight of loss equation. Recommend 0.5 or 1.0.
         kl_weight_start=0.01,  # KL start weight when annealing.
         kl_tolerance=0.2,  # Level of KL loss at which to stop optimizing for KL. default 0.2
@@ -65,8 +65,8 @@ def get_default_hparams():
         augment_stroke_prob=0.10,  # Point dropping augmentation proportion.
         conditional=True,  # When False, use unconditional decoder-only model.
         is_training=True,  # Is model training? Recommend keeping true.
-        num_enc_experts=1,   # The num of the encoder Experts
-        num_dec_experts=2
+        num_enc_experts=2,   # The num of the encoder Experts
+        num_dec_experts=2    # The num of the decoder Experts
     )
     return hparams
 
@@ -171,20 +171,22 @@ class Model(object):
         with tf.variable_scope('DEC_RNN') as scope:
             for i in range(N):
                 try:
-                    output_w = tf.get_variable('output_w', [self.hps.dec_rnn_size, n_out])
-                    output_b = tf.get_variable('output_b', [n_out])
+                    output_w = tf.get_variable('{0}{1}'.format("output_w", i), [self.hps.dec_rnn_size, n_out])
+                    output_b = tf.get_variable('{0}{1}'.format("output_b", i), [n_out])
                 except ValueError:
                     scope.reuse_variables()
-                    output_w = tf.get_variable('output_w')
-                    output_b = tf.get_variable('output_b')
+                    output_w = tf.get_variable('{0}{1}'.format("output_w", i))
+                    output_b = tf.get_variable('{0}{1}'.format("output_b", i))
 
                 # decoder module of sketch-rnn is below
+                dynamic_rnn_scope = "dynamic_rnn_out{0}".format(i)
                 output, last_state = tf.nn.dynamic_rnn(
                     self.cell,
                     actual_input_x,
                     initial_state=initial_state,
                     time_major=False,
                     swap_memory=True,
+                    scope=dynamic_rnn_scope,
                     dtype=tf.float32)
 
                 # reshape output
@@ -357,8 +359,6 @@ class Model(object):
         # the row of the output correspond to the number of experts
         self.experts_mu_presig = self.encoder(self.output_x, self.sequence_lengths, self.num_enc_experts)
 
-        # TODO:should I save the params of the encoder?
-        # wh it is not saved in check point?
         self.kl_weight = tf.get_variable(name="kl_weight", shape=[],
                                          initializer=tf.constant_initializer(self.hps.kl_weight_start), trainable=False)
 
@@ -368,6 +368,7 @@ class Model(object):
         target = tf.reshape(self.output_x, [-1, 5])
         self.x1_data, self.x2_data, eos_data, eoc_data, cont_data = tf.split(target, 5, 1)  # ???
         self.pen_data = tf.concat([eos_data, eoc_data, cont_data], 1)  # the real pen state
+
 
         # Since we fix num of encoder experts as 1, we have only one mu and one presigma
         mu = self.experts_mu_presig[0][0]
@@ -421,12 +422,101 @@ class Model(object):
                 final_costs = tf.where(idx, costs, final_costs)
 
 
+        self.initial_states = []
+        self.final_states = []  # actually can be regarded as a [num_enc_experts, num_dec_experts, 8] tensor
+        self.batch_zs = []
+        self.gmm_outs = []  # actually can be regarded as a [num_enc_experts, num_dec_experts, 8] tensor
+        experts_kl_cost = []
+
+        for i in range(self.num_enc_experts):
+            mu, presig = self.experts_mu_presig[i]
+            batch_z, kl_costs = self.compute_inputs(mu, presig)
+            self.batch_zs.append(batch_z)
+            experts_kl_cost.append(kl_costs)
+
+        for i in range(self.num_enc_experts):
+            batch_z = self.batch_zs[i]
+            scope = "init_state%d" % i
+            with tf.variable_scope(scope):
+                initial_state = tf.nn.tanh(
+                    rnn.super_linear(
+                        batch_z,
+                        self.cell.state_size,
+                        init_w='gaussian',
+                        weight_start=0.001,
+                        input_size=self.hps.z_size))
+            self.initial_states.append(initial_state)
+
+        """Calculate cost in all possible encoder and decoder combination"""
+
+        # codes below are for debugging
+        # self.idxs = []
+        # self.combs = []
+        # self.fcombs = []
+        # self.costs_visual = []
+
+        for i in range(self.num_enc_experts):
+            batch_z = self.batch_zs[i]
+            pre_tile_y = tf.reshape(batch_z, [self.hps.batch_size, 1, self.hps.z_size])
+            overlay_x = tf.tile(pre_tile_y, [1, self.hps.max_seq_len, 1])
+            actual_input_x = tf.concat([self.input_x, overlay_x], 2)
+
+            initial_state = self.initial_states[i]
+            dec_out = self.decoder(actual_input_x, initial_state, self.num_dec_experts)
+            self.gmm_outs.append([])
+            self.final_states.append([])
+            for j in range(self.num_dec_experts):
+                out, last_state = dec_out[j]
+                self.gmm_outs[i].append(out)
+                self.final_states[i].append(last_state)
+
+                o_pi, o_mu1, o_mu2, o_sigma1, o_sigma2, o_corr, o_pen, o_pen_logits = out
+
+                # compute the reconstruction loss function for GMM
+                r_costs = self.get_lossfunc(o_pi, o_mu1, o_mu2, o_sigma1, o_sigma2, o_corr, o_pen_logits,
+                                            self.x1_data, self.x2_data, self.pen_data)
+                r_costs = tf.reshape(r_costs, [self.hps.batch_size, -1])
+                r_costs = tf.reduce_mean(r_costs, axis=1)
+
+                # compute total costs
+                kl_costs = experts_kl_cost[i]
+                costs = kl_costs * self.kl_weight + r_costs
+                # we denote i_th encoder and j_th decoder as the (i * num_enc_experts + j)_th combination
+                combination = tf.tile([i*self.num_dec_experts+j], [self.hps.batch_size])
+
+                # select the expert with the lowest costs
+                if i == 0 and j == 0:
+                    final_kl_costs = kl_costs
+                    final_r_costs = r_costs
+                    final_costs = costs
+                    final_combination = combination
+                else:
+                    idx = tf.less(costs, final_costs)
+                    final_kl_costs = tf.where(idx, kl_costs, final_kl_costs)
+                    final_r_costs = tf.where(idx, r_costs, final_r_costs)
+                    final_costs = tf.where(idx, costs, final_costs)
+                    final_combination = tf.where(idx, combination, final_combination)
+
+                # codes below are for debugging
+                # self.idxs.append(idx)
+                # self.combs.append(combination)
+                # self.fcombs.append(final_combination)
+                # self.costs_visual.append(final_costs)
+
+
         # compute the average kl cost, reconstruction cost, total cost for the whole batch
         self.kl_cost = tf.reduce_mean(kl_costs)  # for printing only
-        self.batch_zs = [batch_z for _ in range(self.num_dec_experts)]
-        self.initial_states = [initial_state for _ in range(self.num_dec_experts)]
         self.r_cost = tf.reduce_mean(final_r_costs)  # for printing only
         self.cost = tf.reduce_mean(final_costs)  # for printing only in validation mode, for optimizer in training mode
+        self.combination = final_combination
+
+        # find out what exactly idx and comb are
+        # codes below are for debugging
+            # self.idx = tf.stack(self.idxs)
+            # self.idx = tf.cast(self.idx, dtype=tf.int32)
+            # self.comb = tf.stack(self.combs)
+            # self.fcomb = tf.stack(self.fcombs)
+            # self.costs_visual = tf.stack(self.costs_visual)
 
         if self.hps.is_training:
             # optimization: update all params in the computation graph
@@ -529,7 +619,7 @@ def sample(sess, model, seq_len=250, temperature=1.0, greedy_mode=False, z=None)
     # generate strokes by the best expert
     # (number of experts, seq_len, 5)
     # number of experts set to be 2
-    strokes = np.zeros((model.num_dec_experts, seq_len, 5), dtype=np.float32)
+    strokes = np.zeros((model.num_enc_experts, model.num_dec_experts, seq_len, 5), dtype=np.float32)
     greedy = False
     temp = 1.0
     prev_xs = None  # store the previous output dot x
@@ -543,7 +633,7 @@ def sample(sess, model, seq_len=250, temperature=1.0, greedy_mode=False, z=None)
             }
         else:
             if prev_xs is None:
-                prev_xs = [prev_x for _ in range(model.num_dec_experts)]
+                prev_xs = [prev_x for _ in range(model.num_enc_experts * model.num_dec_experts)]
             feed = {l: r for l, r in zip(model.input_xs, prev_xs)}
             feed.update({model.sequence_lengths: [1]})
             feed.update({l: r for l, r in zip(model.initial_states, prev_state)})
@@ -556,35 +646,36 @@ def sample(sess, model, seq_len=250, temperature=1.0, greedy_mode=False, z=None)
         prev_state = []
         prev_xs = []
 
-        for k in range(model.num_dec_experts):
-            o_pi, o_mu1, o_mu2, o_sigma1, o_sigma2, o_corr, o_pen, o_pen_logits = gmm_outs[k]
-            next_state = final_states[k]
+        for j in range(model.num_enc_experts):
+            for k in range(model.num_dec_experts):
+                o_pi, o_mu1, o_mu2, o_sigma1, o_sigma2, o_corr, o_pen, o_pen_logits = gmm_outs[j][k]
+                next_state = final_states[j][k]
 
-            if i < 0:
-                greedy = False
-                temp = 1.0
-            else:
-                greedy = greedy_mode
-                temp = temperature
+                if i < 0:
+                    greedy = False
+                    temp = 1.0
+                else:
+                    greedy = greedy_mode
+                    temp = temperature
 
-            idx = get_pi_idx(random.random(), o_pi[0], temp, greedy)
+                idx = get_pi_idx(random.random(), o_pi[0], temp, greedy)
 
-            idx_eos = get_pi_idx(random.random(), o_pen[0], temp, greedy)
-            eos = [0, 0, 0]
-            eos[idx_eos] = 1
+                idx_eos = get_pi_idx(random.random(), o_pen[0], temp, greedy)
+                eos = [0, 0, 0]
+                eos[idx_eos] = 1
 
-            next_x1, next_x2 = sample_gaussian_2d(o_mu1[0][idx], o_mu2[0][idx],
-                                                  o_sigma1[0][idx], o_sigma2[0][idx],
-                                                  o_corr[0][idx], np.sqrt(temp), greedy)
+                next_x1, next_x2 = sample_gaussian_2d(o_mu1[0][idx], o_mu2[0][idx],
+                                                      o_sigma1[0][idx], o_sigma2[0][idx],
+                                                      o_corr[0][idx], np.sqrt(temp), greedy)
 
-            # compute reconstruction error for the best expert
+                # compute reconstruction error for the best expert
 
-            strokes[k, i, :] = [next_x1, next_x2, eos[0], eos[1], eos[2]]
+                strokes[j, k, i, :] = [next_x1, next_x2, eos[0], eos[1], eos[2]]
 
-            prev_x = np.zeros((1, 1, 5), dtype=np.float32)
-            prev_x[0][0] = np.array(
-                [next_x1, next_x2, eos[0], eos[1], eos[2]], dtype=np.float32)
-            prev_xs.append(prev_x)
-            prev_state.append(next_state)
+                prev_x = np.zeros((1, 1, 5), dtype=np.float32)
+                prev_x[0][0] = np.array(
+                    [next_x1, next_x2, eos[0], eos[1], eos[2]], dtype=np.float32)
+                prev_xs.append(prev_x)
+                prev_state.append(next_state)
 
     return strokes

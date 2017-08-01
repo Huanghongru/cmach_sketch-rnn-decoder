@@ -123,6 +123,7 @@ def scale_bound(stroke, average_dimension=10.0):
 
 
 def to_normal_strokes(big_stroke):
+    # type: (object) -> object
     """Convert from stroke-5 format (from sketch-rnn paper) back to stroke-3."""
     l = 0
     for i in range(len(big_stroke)):

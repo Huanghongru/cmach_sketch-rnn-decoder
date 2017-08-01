@@ -1,1 +1,6 @@
+<<<<<<< HEAD
 workspace.xml
+=======
+*.xml
+.idea/
+>>>>>>> dev
