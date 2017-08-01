@@ -278,6 +278,9 @@ def train(sess, model, eval_model, train_set, valid_set, test_set):
 
     hps = model.hps
     start = time.time()
+    # init the combination matrix
+    # comb_mtrix[i][j] := combination of i_th encoder expert and j_th decoder expert
+    comb_matrix = np.zeros([model.num_enc_experts, model.num_dec_experts], dtype=np.int32)
 
     for step in range(hps.num_steps):
 
@@ -294,12 +297,27 @@ def train(sess, model, eval_model, train_set, valid_set, test_set):
             model.kl_weight: curr_kl_weight
         }
 
-        (train_cost, r_cost, kl_cost, _, train_step, _) = sess.run([
+        # codes below are for debugging
+        # (train_cost, r_cost, kl_cost, _, train_step, _, combination, idx, comb, fcomb, cost_v) = sess.run([
+        #     model.cost, model.r_cost, model.kl_cost, model.final_states,
+        #     model.global_step, model.train_op, model.combination,
+        #     model.idx, model.comb, model.fcomb, model.costs_visual
+        # ], feed)
+        (train_cost, r_cost, kl_cost, _, train_step, _, combination) = sess.run([
             model.cost, model.r_cost, model.kl_cost, model.final_states,
-            model.global_step, model.train_op
+            model.global_step, model.train_op, model.combination
         ], feed)
 
-        if step % 20 == 0 and step > 0:
+        # codes below are for debugging
+        # tf.logging.info('idx:\n{0}'.format(idx))
+        # tf.logging.info('combination cadidate:\n{0}'.format(comb))
+        # tf.logging.info('final_comb candidate:\n{0}'.format(fcomb))
+        # tf.logging.info('final_costs_visual:\n{0}'.format(cost_v))
+
+        for i in range(model.hps.batch_size):
+            comb_matrix[int(combination[i] / model.num_dec_experts)][int(combination[i] % model.num_dec_experts)] += 1
+
+        if step % 2 == 0 and step > 0:
             end = time.time()
             time_taken = end - start
 
@@ -322,13 +340,14 @@ def train(sess, model, eval_model, train_set, valid_set, test_set):
             time_summ.value.add(
                 tag='Time_Taken_Train', simple_value=float(time_taken))
 
-            output_format = ('step: %d, lr: %.6f, klw: %0.4f, cost: %.4f, '
+            output_format = ('step: %d, lr: %.6f, klw: %.4f, cost: %.4f, '
                              'recon: %.4f, kl: %.4f, train_time_taken: %.4f')
             output_values = (step, curr_learning_rate, curr_kl_weight, train_cost,
                              r_cost, kl_cost, time_taken)
             output_log = output_format % output_values
-
             tf.logging.info(output_log)
+            tf.logging.info('combination matrix: \n{0}'.format(comb_matrix))
+            tf.logging.info('-'*50)
 
             summary_writer.add_summary(cost_summ, train_step)
             summary_writer.add_summary(reconstr_summ, train_step)
