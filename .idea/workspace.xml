@@ -2,7 +2,42 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fc892281-bc83-4483-b0c6-dcf14c2bd500" name="Default" comment="">
+      <change type="DELETED" beforePath="$PROJECT_DIR$/test_model/checkpoint" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/test_model/events.out.tfevents.1500558493.ubuntu" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/test_model/events.out.tfevents.1500559489.ubuntu" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/test_model/events.out.tfevents.1500604367.ubuntu" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/test_model/events.out.tfevents.1500604733.ubuntu" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/test_model/events.out.tfevents.1500604870.ubuntu" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/test_model/events.out.tfevents.1500605421.ubuntu" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/test_model/events.out.tfevents.1500635427.ubuntu" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/test_model/events.out.tfevents.1500645789.ubuntu" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/test_model/events.out.tfevents.1500646046.ubuntu" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/test_model/events.out.tfevents.1500649796.ubuntu" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/test_model/events.out.tfevents.1500649900.ubuntu" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/test_model/events.out.tfevents.1501125973.ubuntu" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/test_model/events.out.tfevents.1501126933.ubuntu" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/test_model/events.out.tfevents.1501128061.ubuntu" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/test_model/events.out.tfevents.1501128499.ubuntu" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/test_model/events.out.tfevents.1501128660.ubuntu" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/test_model/events.out.tfevents.1501129238.ubuntu" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/test_model/events.out.tfevents.1501208467.ubuntu-NF5280M4" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/test_model/events.out.tfevents.1501211178.ubuntu-NF5280M4" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/test_model/events.out.tfevents.1501471382.ubuntu-NF5280M4" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/test_model/model_config.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/test_model/vector-1.data-00000-of-00001" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/test_model/vector-1.index" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/test_model/vector-1.meta" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/test_model/vector-10000.data-00000-of-00001" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/test_model/vector-10000.index" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/test_model/vector-10000.meta" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/test_model/vector-5.data-00000-of-00001" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/test_model/vector-5.index" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/test_model/vector-5.meta" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/model.py" afterPath="$PROJECT_DIR$/model.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/sketch_rnn_train.py" afterPath="$PROJECT_DIR$/sketch_rnn_train.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test.ipynb" afterPath="$PROJECT_DIR$/test.ipynb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/utils.py" afterPath="$PROJECT_DIR$/utils.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -14,11 +49,11 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="model.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="model.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-4548">
-              <caret line="180" column="28" lean-forward="false" selection-start-line="180" selection-start-column="27" selection-end-line="180" selection-end-column="28" />
+            <state relative-caret-position="508">
+              <caret line="599" column="80" lean-forward="false" selection-start-line="599" selection-start-column="80" selection-end-line="599" selection-end-column="80" />
               <folding>
                 <element signature="e#620#658#0" expanded="true" />
               </folding>
@@ -26,11 +61,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="utils.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/utils.py">
+      <file leaf-file-name="model_wta.py" pinned="false" current-in-tab="false">
+        <entry file="file://$USER_HOME$/sketch-rnn_moe/model_wta.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3120">
-              <caret line="124" column="13" lean-forward="false" selection-start-line="124" selection-start-column="4" selection-end-line="124" selection-end-column="13" />
+            <state relative-caret-position="14066">
+              <caret line="552" column="39" lean-forward="false" selection-start-line="552" selection-start-column="33" selection-end-line="552" selection-end-column="39" />
               <folding />
             </state>
           </provider>
@@ -39,18 +74,8 @@
       <file leaf-file-name="sketch_rnn_train.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/sketch_rnn_train.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="26">
-              <caret line="301" column="20" lean-forward="false" selection-start-line="301" selection-start-column="20" selection-end-line="301" selection-end-column="20" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="model_wta.py" pinned="false" current-in-tab="true">
-        <entry file="file://$USER_HOME$/sketch-rnn_moe/model_wta.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1350">
-              <caret line="333" column="27" lean-forward="false" selection-start-line="333" selection-start-column="27" selection-end-line="333" selection-end-column="27" />
+            <state relative-caret-position="6838">
+              <caret line="281" column="41" lean-forward="false" selection-start-line="281" selection-start-column="41" selection-end-line="281" selection-end-column="41" />
               <folding />
             </state>
           </provider>
@@ -60,26 +85,12 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>output_x</find>
-      <find>self.input_data</find>
-      <find>batch</find>
-      <find>final_states</find>
-      <find>decoder</find>
-      <find>draw_strokes</find>
-      <find>to_big_stroke</find>
-      <find>self.batch_z</find>
-      <find>self.kl_cost</find>
-      <find>self.</find>
-      <find>to_normal</find>
-      <find>sample</find>
       <find>initial_state</find>
-      <find>gmm_outs</find>
       <find>evaluate_model</find>
       <find>valid_set</find>
       <find>test_set</find>
       <find>load_dataset</find>
       <find>sketch_rnn_model</find>
-      <find>kl_costs</find>
       <find>reset_graph</find>
       <find>kl_cost</find>
       <find>copy_h</find>
@@ -90,6 +101,20 @@
       <find>get_lossfunc</find>
       <find>get_mixture_coef</find>
       <find>get_mixture_coe</find>
+      <find>initial_states</find>
+      <find>kl_costs</find>
+      <find>sess</find>
+      <find>combination</find>
+      <find>reuse</find>
+      <find>id</find>
+      <find>final_states</find>
+      <find>idx</find>
+      <find>decoder</find>
+      <find>sample</find>
+      <find>dec_out</find>
+      <find>params</find>
+      <find>run</find>
+      <find>gmm_outs</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -99,13 +124,13 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/sketch_rnn.ipynb" />
-        <option value="$PROJECT_DIR$/utils.py" />
         <option value="$PROJECT_DIR$/test-ori.ipynb" />
         <option value="$USER_HOME$/sketch-rnn_moe/test.ipynb" />
         <option value="$USER_HOME$/Magenta/magenta/models/sketch_rnn/sketch_rnn.ipynb" />
-        <option value="$PROJECT_DIR$/test.ipynb" />
         <option value="$PROJECT_DIR$/sketch_rnn_train.py" />
         <option value="$PROJECT_DIR$/model.py" />
+        <option value="$PROJECT_DIR$/utils.py" />
+        <option value="$PROJECT_DIR$/test.ipynb" />
       </list>
     </option>
   </component>
@@ -136,7 +161,7 @@
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
-    <navigator proportions="" version="1">
+    <navigator currentView="ProjectPane" proportions="" version="1">
       <flattenPackages />
       <showMembers />
       <showModules />
@@ -149,10 +174,27 @@
       <manualOrder />
       <foldersAlwaysOnTop value="true" />
     </navigator>
-    <panes />
+    <panes>
+      <pane id="ProjectPane">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="sketch_rnn_mix" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="sketch_rnn_mix" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
+      <pane id="Scope" />
+      <pane id="Scratches" />
+    </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$USER_HOME$/sketch-rnn_moe/model_wta.py" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RunDashboard">
@@ -298,22 +340,23 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="64" y="-11" width="1857" height="1092" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.1381979" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.96868473" sideWeight="0.50193477" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.96868473" sideWeight="0.49806523" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.7881002" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4415449" sideWeight="0.5063571" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.808977" sideWeight="0.4936429" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.7881002" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32985386" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -408,7 +451,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3120">
           <caret line="124" column="13" lean-forward="false" selection-start-line="124" selection-start-column="4" selection-end-line="124" selection-end-column="13" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -458,7 +500,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3224">
           <caret line="124" column="13" lean-forward="false" selection-start-line="124" selection-start-column="4" selection-end-line="124" selection-end-column="13" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -498,7 +539,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3120">
           <caret line="124" column="13" lean-forward="false" selection-start-line="124" selection-start-column="4" selection-end-line="124" selection-end-column="13" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -577,7 +617,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="494">
           <caret line="23" column="17" lean-forward="false" selection-start-line="23" selection-start-column="17" selection-end-line="23" selection-end-column="17" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -704,6 +743,29 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$USER_HOME$/sketch-rnn_moe/model_wta.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="14066">
+          <caret line="552" column="39" lean-forward="false" selection-start-line="552" selection-start-column="33" selection-end-line="552" selection-end-column="39" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="26">
+          <caret line="125" column="19" lean-forward="false" selection-start-line="125" selection-start-column="13" selection-end-line="125" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sketch_rnn_train.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="6838">
+          <caret line="281" column="41" lean-forward="false" selection-start-line="281" selection-start-column="41" selection-end-line="281" selection-end-column="41" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/test.ipynb">
       <provider selected="true" editor-type-id="ipnb-editor">
         <state>
@@ -711,37 +773,13 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3120">
-          <caret line="124" column="13" lean-forward="false" selection-start-line="124" selection-start-column="4" selection-end-line="124" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/sketch_rnn_train.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="26">
-          <caret line="301" column="20" lean-forward="false" selection-start-line="301" selection-start-column="20" selection-end-line="301" selection-end-column="20" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-4548">
-          <caret line="180" column="28" lean-forward="false" selection-start-line="180" selection-start-column="27" selection-end-line="180" selection-end-column="28" />
+        <state relative-caret-position="508">
+          <caret line="599" column="80" lean-forward="false" selection-start-line="599" selection-start-column="80" selection-end-line="599" selection-end-column="80" />
           <folding>
             <element signature="e#620#658#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/sketch-rnn_moe/model_wta.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1350">
-          <caret line="333" column="27" lean-forward="false" selection-start-line="333" selection-start-column="27" selection-end-line="333" selection-end-column="27" />
-          <folding />
         </state>
       </provider>
     </entry>
